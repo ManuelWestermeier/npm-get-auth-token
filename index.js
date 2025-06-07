@@ -1,62 +1,46 @@
-// index.js
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGithubToken = getGithubToken;
 /**
  * Opens a full-screen iframe to perform GitHub OAuth and returns the access token.
  * @returns {Promise<string>} Resolves with the GitHub access token
  */
-export async function getGithubToken() {
-  return new Promise((resolve, reject) => {
-    // Create or reuse the iframe
-    let iframe = document.getElementById("gh-auth-iframe");
+function getGithubToken() {
+  return new Promise(function (resolve, reject) {
+    var iframe = document.getElementById("gh-auth-iframe");
     if (!iframe) {
       iframe = document.createElement("iframe");
       iframe.id = "gh-auth-iframe";
-      Object.assign(iframe.style, {
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "100vw",
-        height: "100vh",
-        border: "none",
-        zIndex: "9999",
-        display: "none",
-      });
+      iframe.style.position = "fixed";
+      iframe.style.top = "0";
+      iframe.style.left = "0";
+      iframe.style.width = "100vw";
+      iframe.style.height = "100vh";
+      iframe.style.border = "none";
+      iframe.style.zIndex = "9999";
       document.body.appendChild(iframe);
     }
-
-    // Construct auth URL
-    const appUrl = window.location.origin + window.location.pathname;
-    const authUrl = `https://gh-authtoken-test.onrender.com/github/login?appUrl=${encodeURIComponent(
-      appUrl
-    )}`;
-
-    // Message handler
-    const onMessage = (event) => {
-      if (event.source !== iframe.contentWindow) return;
-      const data = event.data;
-      if (typeof data === "string" && data.startsWith("gh-token:")) {
-        const token = data.replace("gh-token:", "");
-        cleanup();
-        resolve(token);
+    var appUrl = window.location.origin + window.location.pathname;
+    iframe.src =
+      "https://gh-authtoken-test.onrender.com/github/login?appUrl=".concat(
+        encodeURIComponent(appUrl)
+      );
+    var handleMessage = function (event) {
+      if (
+        typeof event.data === "string" &&
+        event.data.startsWith("gh-token:")
+      ) {
+        window.removeEventListener("message", handleMessage);
+        iframe.remove();
+        resolve(event.data.replace("gh-token:", ""));
       }
     };
-
-    // Cleanup on success or timeout
-    const cleanup = () => {
-      window.removeEventListener("message", onMessage);
-      clearTimeout(timeout);
-      iframe.style.display = "none";
-    };
-
-    // Setup timeout
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("OAuth timed out"));
-    }, 2 * 60 * 1000); // 2-minute timeout
-
-    // Start listening and show iframe
-    window.addEventListener("message", onMessage);
-    iframe.src = authUrl;
-    iframe.style.display = "block";
+    window.addEventListener("message", handleMessage);
+    // Timeout in case of failure
+    setTimeout(function () {
+      window.removeEventListener("message", handleMessage);
+      iframe.remove();
+      reject(new Error("OAuth timed out after 2 minutes"));
+    }, 120000);
   });
 }

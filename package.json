@@ -1,14 +1,10 @@
 {
     "name": "get-github-auth-token",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Promise-based GitHub OAuth token retrieval via fullscreen iframe",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "index.js",
+    "types": "index.ts",
     "scripts": {
-        "build": "tsc",
-        "prepare": "npm run build",
-        "clean": "rm -rf dist",
-        "prepublishOnly": "npm test && npm run build",
         "test": "echo \"No tests specified\" && exit 0"
     },
     "keywords": [
@@ -19,6 +15,5 @@
         "promise"
     ],
     "author": "Manuel Westermeier",
-    "license": "MIT",
-    "devDependencies": {}
+    "license": "MIT"
 }

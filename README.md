@@ -6,3 +6,4 @@ Promise-based GitHub OAuth token retrieval via fullscreen iframe.
 
 ```bash
 npm install get-github-auth-token
+```
