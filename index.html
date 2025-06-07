@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitHub Login Demo</title>
+  </head>
+  <body>
+    <h1>GitHub OAuth Token Demo</h1>
+    <button onclick="loginWithGitHub()">Login with GitHub</button>
+
+    <p id="output"></p>
+
+    <script>
+      function loginWithGitHub() {
+        const appUrl = window.location.origin;
+        const authUrl = `https://gh-authtoken-test.onrender.com/github/login?appUrl=${encodeURIComponent(
+          appUrl
+        )}`;
+        window.location.href = authUrl;
+      }
+
+      // If redirected back with a token:
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("token")) {
+        const token = params.get("token");
+        document.getElementById("output").textContent =
+          "Your GitHub token: " + token;
+      }
+    </script>
+  </body>
+</html>
